@@ -8,20 +8,19 @@ from PyQt5.QtWidgets import (
 
 API_URL = "http://127.0.0.1:8000"
 
-# Worker Thread for API Calls
 class InventoryWorker(QThread):
-    finished = pyqtSignal(list)  # Signal to send inventory data back to UI
-    error = pyqtSignal(str)  # Signal to send error messages
+    finished = pyqtSignal(list) 
+    error = pyqtSignal(str)  
 
     def run(self):
         try:
             response = requests.get(f"{API_URL}/list-items")
             data = response.json().get("items", [])
-            self.finished.emit(data)  # Send data back to UI
+            self.finished.emit(data)  
         except Exception as e:
-            self.error.emit(str(e))  # Send error message to UI
+            self.error.emit(str(e))  
 
-# PyQt Inventory UI
+
 class InventoryApp(QWidget):
     def __init__(self):
         super().__init__()
@@ -34,7 +33,7 @@ class InventoryApp(QWidget):
         self.table.setHorizontalHeaderLabels(["Item", "Quantity"])
 
         self.refresh_button = QPushButton("Refresh Inventory")
-        self.refresh_button.clicked.connect(self.load_inventory)  # Connect button to refresh method
+        self.refresh_button.clicked.connect(self.load_inventory)  
         
         self.add_name_input = QLineEdit()
         self.add_name_input.setPlaceholderText("Item Name")
@@ -77,7 +76,7 @@ class InventoryApp(QWidget):
         self.worker = InventoryWorker()
         self.worker.finished.connect(self.update_inventory_table)
         self.worker.error.connect(self.show_error)
-        self.worker.start()  # Run the worker in a separate thread
+        self.worker.start()  
 
     def update_inventory_table(self, data):
         """Update UI table with inventory data."""
